@@ -8,4 +8,12 @@ This project contains a generator of massive DEA datasets, which include a large
 - DEA implemented with PuLp
 - DEA implemented with SciPy
 
-#### Both are using the same simple dataset for now
+#### The solvers are being executed in a main file
+
+## Main File
+
+#### Generate a simple DEA dataset, with only 10 DMUs and one input column and one output column
+
+#### The dataset is export in csv format and is used by the solvers
+
+#### Results are printed to be compared
