@@ -4,43 +4,67 @@ import random
 from dea_ccr_output_oriented_pulp import dea_ccr_output_pulp
 from dea_ccr_output_oriented_scipy import dea_ccr_output_scipy
 
-qtd_dmus = 10
-
 csv_name = "dataset_dea.csv"
+
+# Generating random quantity of inputs and outputs
+num_inputs = random.randint(10, 30)
+num_outputs = random.randint(10, 20)
+
+# DEA rule:
+# n >= max{m*s, 3(m+s)}
+#
+# n = DMUs
+# m = inputs
+# s = outputs
+min_dmus = max(num_inputs * num_outputs, 3 * (num_inputs + num_outputs))
+
+# Generating random quantity of DMUs respecting the rule
+num_dmus = random.randint(min_dmus, min_dmus + 20)
+
+print("\nDEA CONFIGURATION\n")
+print(f"DMUs: {num_dmus}")
+print(f"Inputs: {num_inputs}")
+print(f"Outputs: {num_outputs}")
 
 data = []
 
-for i in range(qtd_dmus):
+for i in range(num_dmus):
 
-    dmu = f"DMU_{i+1}"
+    row = []
 
-    input_value = random.randint(1, 20)
+    # DMU name
+    row.append(f"DMU_{i + 1}")
 
-    output_value = random.randint(1, 30)
+    # Input values
+    for j in range(num_inputs):
+        row.append(random.randint(1, 20))
 
-    data.append([
-        dmu,
-        input_value,
-        output_value
-    ])
+    # Output values
+    for j in range(num_outputs):
+        row.append(random.randint(1, 30))
 
-dataset = pd.DataFrame(
-    data,
-    columns=[
-        "DMU",
-        "Input",
-        "Output"
-    ]
-)
+    data.append(row)
+
+columns = ["DMU"]
+
+# Input columns
+for i in range(num_inputs):
+    columns.append(f"Input_{i + 1}")
+
+# Output columns
+for i in range(num_outputs):
+    columns.append(f"Output_{i + 1}")
+
+dataset = pd.DataFrame(data, columns=columns)
 
 dataset.to_csv(csv_name, index=False)
 print("\nGENERATED DATASET\n")
 print(dataset.to_string(index=False))
 
-resultado_pulp = dea_ccr_output_pulp(csv_name)
+result_pulp = dea_ccr_output_pulp(csv_name)
 print("\n\nRESULT DEA - PULP\n")
-print(resultado_pulp.to_string(index=False))
+print(result_pulp.to_string(index=False))
 
-resultado_scipy = dea_ccr_output_scipy(csv_name)
+result_scipy = dea_ccr_output_scipy(csv_name)
 print("\n\nRESULT DEA - SCIPY\n")
-print(resultado_scipy.to_string(index=False))
+print(result_scipy.to_string(index=False))

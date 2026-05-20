@@ -5,21 +5,29 @@ def dea_ccr_output_scipy(csv_path):
 
     dataset = pd.read_csv(csv_path)
 
+    input_columns = [
+        col for col in dataset.columns
+        if col.startswith("Input_")
+    ]
+
+    output_columns = [
+        col for col in dataset.columns
+        if col.startswith("Output_")
+    ]
+
     results = []
 
-    for i in range(len(dataset)):
+    n = len(dataset)
+
+    for i in range(n):
 
         dmu_name = dataset.loc[i, 'DMU']
-        current_input = dataset.loc[i, 'Input']
-        current_output = dataset.loc[i, 'Output']
-
-        n = len(dataset)
 
         # linprog solves only minimization problems.
         # Since the CCR output-oriented DEA model maximizes phi, the problem is converted to min(-phi).
         # [0]*n creates 0 coefficients for the lambdas and [-1] adds the coefficient for phi.
         # The objective function will be min(0λ1 + 0λ2 + ... + 0λn - 1φ)
-        objective_function = [0]*n + [-1]
+        objective_function = [0] * n + [-1]
 
         # Matrix containing the constraint coefficients.
         # linprog uses the format: A_ub * x <= b_ub
@@ -28,20 +36,36 @@ def dea_ccr_output_scipy(csv_path):
         # Vector containing the constraint limits.
         constraint_limits = []
 
-        # Input constraint:
-        # Σ(λj * xj) <= x0
-        # Phi does not participate in this constraint, so its coefficient is 0.
-        input_constraint = list(dataset["Input"]) + [0]
-        constraint_matrix.append(input_constraint)
-        constraint_limits.append(current_input)
+        # Input constraints
+        # For each input k:
+        # Σ(λ_j * x_jk) ≤ x_ik
+        for input_col in input_columns:
 
-        # Output constraint:
-        # Σ(λj * yj) >= φ * y0
-        # SciPy requires constraints in <= format, so the equation is multiplied by -1:
-        # -Σ(λj * yj) + φ*y0 <= 0
-        output_constraint = list(-dataset["Output"]) + [current_output]
-        constraint_matrix.append(output_constraint)
-        constraint_limits.append(0)
+            input_constraint = (
+                list(dataset[input_col]) + [0]
+            )
+
+            constraint_matrix.append(input_constraint)
+
+            constraint_limits.append(
+                dataset.loc[i, input_col]
+            )
+
+        # Output constraints
+        # Original DEA form:
+        # Σ(λ_j * y_jr) ≥ φ * y_ir
+        # linprog requires constraints in <= format, so the equation is multiplied by -1:
+        # -Σ(λ_j * y_jr) + φ*y_ir ≤ 0
+        for output_col in output_columns:
+
+            output_constraint = (
+                list(-dataset[output_col])
+                + [dataset.loc[i, output_col]]
+            )
+
+            constraint_matrix.append(output_constraint)
+
+            constraint_limits.append(0)
 
         # Defines:
         # λj >= 0
@@ -73,36 +97,24 @@ def dea_ccr_output_scipy(csv_path):
                 else "Inefficient"
             )
 
-            results.append([
-                dmu_name,
-                current_input,
-                current_output,
-                round(phi, 4),
-                round(efficiency, 4),
-                status
-            ])
+            result_row = {
+                "DMU": dmu_name,
+                "Phi": round(phi, 4),
+                "Efficiency": round(efficiency, 4),
+                "Status": status
+            }
 
         else:
-            results.append([
-                dmu_name,
-                current_input,
-                current_output,
-                None,
-                None,
-                "Optimization Error"
-            ])
+            result_row = {
+                "DMU": dmu_name,
+                "Phi": None,
+                "Efficiency": None,
+                "Status": "Optimization Error"
+            }
 
-    result_dataset = pd.DataFrame(
-        results,
-        columns=[
-            "DMU",
-            "Input",
-            "Output",
-            "Phi",
-            "Efficiency",
-            "Status"
-        ]
-    )
+        results.append(result_row)
+
+    result_dataset = pd.DataFrame(results)
 
     return result_dataset
 
