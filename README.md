@@ -12,7 +12,15 @@ This project contains a generator of massive DEA datasets, which include a large
 
 ## Main File
 
-#### Generate a simple DEA dataset, with only 10 DMUs and one input column and one output column
+#### Generates a DEA dataset, with random numbers to inputs and outputs and then generate the number of DMUs respecting the rule:
+
+` n >= max{m * s, 3(m + s)} `
+
+`n = DMUs `
+
+`m = inputs `
+
+`s = outputs `
 
 #### The dataset is export in csv format and is used by the solvers
 
