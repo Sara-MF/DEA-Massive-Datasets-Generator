@@ -2,6 +2,7 @@ import pandas as pd
 import random
 
 from dea_ccr_output_oriented_pulp import dea_ccr_output_pulp
+from dea_ccr_input_oriented_pulp import dea_ccr_input_pulp
 from dea_ccr_output_oriented_scipy import dea_ccr_output_scipy
 
 csv_name = "dataset_dea.csv"
@@ -91,14 +92,20 @@ dataset.to_csv(csv_name, index=False)
 # print("\nGENERATED DATASET\n")
 # print(dataset.to_string(index=False))
 
-result_pulp, efficients_pulp, inefficients_pulp = dea_ccr_output_pulp(csv_name)
-print("\n\nRESULT DEA - PULP\n")
+result_pulp, efficients_ccr_output_pulp, inefficients_ccr_output_pulp = dea_ccr_output_pulp(csv_name)
+print("\n\nRESULT DEA - OUTPUT ORIENTED PULP\n")
 # print(result_pulp.to_string(index=False))
-print("Efficients - PULP: ", efficients_pulp)
-print("Inefficients - PULP: ", inefficients_pulp)
+print("Efficients: ", efficients_ccr_output_pulp)
+print("Inefficients: ", inefficients_ccr_output_pulp)
+
+result_pulp, efficients_ccr_input_pulp, inefficients_ccr_input_pulp = dea_ccr_input_pulp(csv_name)
+print("\n\nRESULT DEA - INPUT ORIENTED PULP\n")
+# print(result_pulp.to_string(index=False))
+print("Efficients: ", efficients_ccr_input_pulp)
+print("Inefficients: ", inefficients_ccr_input_pulp)
 
 result_scipy, efficients_scipy, inefficients_scipy = dea_ccr_output_scipy(csv_name)
 print("\n\nRESULT DEA - SCIPY\n")
 # print(result_scipy.to_string(index=False))
-print("Efficients - PULP: ", efficients_scipy)
-print("Inefficients - PULP: ", inefficients_scipy)
+print("Efficients: ", efficients_scipy)
+print("Inefficients: ", inefficients_scipy)
