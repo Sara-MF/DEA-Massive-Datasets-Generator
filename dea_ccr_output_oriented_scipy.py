@@ -17,6 +17,10 @@ def dea_ccr_output_scipy(csv_path):
 
     results = []
 
+    efficients = 0
+
+    inefficients = 0
+
     n = len(dataset)
 
     for i in range(n):
@@ -97,6 +101,11 @@ def dea_ccr_output_scipy(csv_path):
                 else "Inefficient"
             )
 
+            if status == "Efficient":
+                efficients += 1
+            else:
+                inefficients += 1
+
             result_row = {
                 "DMU": dmu_name,
                 "Phi": round(phi, 4),
@@ -116,5 +125,5 @@ def dea_ccr_output_scipy(csv_path):
 
     result_dataset = pd.DataFrame(results)
 
-    return result_dataset
+    return result_dataset, efficients, inefficients
 
