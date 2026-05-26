@@ -24,4 +24,4 @@ This project contains a generator of massive DEA datasets, which include a large
 
 #### The dataset is export in csv format and is used by the solvers
 
-#### Results are printed to be compared
+#### The number of efficients and inefficients DMUs are printed to check if the number of the efficients are too high or not
