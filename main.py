@@ -20,18 +20,12 @@ num_outputs = random.randint(1, 3)
 min_dmus = max(num_inputs * num_outputs, 3 * (num_inputs + num_outputs))
 
 # Generating random quantity of DMUs respecting the rule
-num_dmus = max(min_dmus, min_dmus + 200)
+num_dmus = max(min_dmus, min_dmus + 400)
 
 print("\nDEA CONFIGURATION\n")
 print(f"DMUs: {num_dmus}")
 print(f"Inputs: {num_inputs}")
 print(f"Outputs: {num_outputs}")
-
-# Trying inserting weights
-# weights = [
-#     random.uniform(0.5, 2)
-#     for _ in range(num_inputs)
-# ]
 
 data = []
 
@@ -46,33 +40,58 @@ for i in range(num_dmus):
 
     # Input values
     for j in range(num_inputs):
-        input_value = random.randint(1, 20)
+        input_value = random.randint(1, 100)
 
         inputs.append(input_value)
         row.append(input_value)
 
-    total_inputs = sum(inputs)
+   # Controls the proportion of efficient DMUs
+    if random.random() < 0.08:
+        true_efficiency = 1.0
+    else:
+        true_efficiency = random.uniform(
+            0.50,
+            0.95
+        )
+
+    # Assigns a relative importance to each input
+    weights = [
+        random.uniform(0.5, 1.5)
+        for _ in range(num_inputs)
+    ]
+
+    # Estimates the DMU's production capacity
+    productive_capacity = sum(
+        w * x
+        for w, x in zip(weights, inputs)
+    )
 
     # Output values
     for j in range(num_outputs):
-        # Random proportional factor
-        if random.random() < 0.15:
-            proportional_factor = random.uniform(
-                0.98,
-                1.05
-            )
-        else:
-            proportional_factor = random.uniform(
-                0.55,
-                0.95
-            )
 
-        # Random noise
-        noise = random.uniform(-10, 10)
+        # Introduces variation among outputs
+        output_factor = random.uniform(
+            0.6,
+            1.3
+        )
 
-        output_value = abs(int((total_inputs * proportional_factor) + noise))
+        # Introduces random variation
+        noise = random.uniform(
+            0.90,
+            1.10
+        )
 
-        row.append(output_value)
+        # Generates the final output value
+        output_value = (
+            productive_capacity
+            * true_efficiency
+            * output_factor
+            * noise
+        )
+
+        row.append(
+            round(output_value)
+        )
 
     data.append(row)
 
@@ -89,23 +108,27 @@ for i in range(num_outputs):
 dataset = pd.DataFrame(data, columns=columns)
 
 dataset.to_csv(csv_name, index=False)
-# print("\nGENERATED DATASET\n")
-# print(dataset.to_string(index=False))
+print("\n----------------------\n\nGENERATED DATASET\n")
+print(dataset.head())
+print("\n----------------------\n")
 
 result_pulp, efficients_ccr_output_pulp, inefficients_ccr_output_pulp = dea_ccr_output_pulp(csv_name)
-print("\n\nRESULT DEA - OUTPUT ORIENTED PULP\n")
+print("RESULT DEA - OUTPUT ORIENTED PULP\n")
 # print(result_pulp.to_string(index=False))
 print("Efficients: ", efficients_ccr_output_pulp)
 print("Inefficients: ", inefficients_ccr_output_pulp)
+print("\n----------------------\n")
 
 result_pulp, efficients_ccr_input_pulp, inefficients_ccr_input_pulp = dea_ccr_input_pulp(csv_name)
-print("\n\nRESULT DEA - INPUT ORIENTED PULP\n")
+print("RESULT DEA - INPUT ORIENTED PULP\n")
 # print(result_pulp.to_string(index=False))
 print("Efficients: ", efficients_ccr_input_pulp)
 print("Inefficients: ", inefficients_ccr_input_pulp)
+print("\n----------------------\n")
 
 result_scipy, efficients_scipy, inefficients_scipy = dea_ccr_output_scipy(csv_name)
-print("\n\nRESULT DEA - SCIPY\n")
+print("RESULT DEA - SCIPY\n")
 # print(result_scipy.to_string(index=False))
 print("Efficients: ", efficients_scipy)
 print("Inefficients: ", inefficients_scipy)
+print("\n")
