@@ -17,6 +17,16 @@ num_inputs = int(input("Insert the number of inputs: "))
 num_outputs = int(input("Insert the number of outputs: "))
 num_dmus = int(input("Insert the number of DMUs: "))
 
+while(num_dmus < 3 * (num_inputs + num_outputs)):
+    print("\nThe inputs does not follow the rule: ")
+    print("num_dmus >= 3 * (num_inputs + num_outputs)\n")
+    print("Insert the values again, respecting the rule\n")
+
+    num_inputs = int(input("Insert the number of inputs: "))
+    num_outputs = int(input("Insert the number of outputs: "))
+    num_dmus = int(input("Insert the number of DMUs: "))
+
+
 print("\nDEA CONFIGURATION\n")
 print(f"DMUs: {num_dmus}")
 print(f"Inputs: {num_inputs}")
