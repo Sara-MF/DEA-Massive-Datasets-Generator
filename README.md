@@ -1,27 +1,196 @@
-# DEA Massive Datasets Generator
+# DEA Massive Dataset Generator
 
-This project contains a generator of massive DEA datasets, which include a large number of inputs and outputs, as well as a large number of DMUs (Decision-Making Units).
+A Python-based academic project for generating large-scale synthetic datasets and evaluating Decision Making Units (DMUs) using Data Envelopment Analysis (DEA).
 
-## CCR Output Oriented
+The project focuses on implementing and testing DEA models under different orientations and optimization libraries, allowing performance and consistency comparisons across solvers.
 
-#### It was built two DEA solvers to compare results:
-- DEA implemented with PuLp
-- DEA implemented with SciPy
+---
 
-#### The solvers are being executed in a main file
+## Objectives
 
-## Main File
+- Generate a synthetic DEA datasets based on input values insert by user
 
-#### Generates a DEA dataset, with random numbers to inputs and outputs and then generate the number of DMUs respecting the rule:
+- Implement classical DEA models:
+  - CCR Input-Oriented
+  - CCR Output-Oriented
+  - BCC Input-Oriented
+  - BCC Output-Oriented
 
-` n >= max{m * s, 3(m + s)} `
+- Compare optimization approaches using:
+  - PuLP + CBC Solver
+  - SciPy + HiGHS Solver
 
-`n = DMUs `
+- Analyze efficiency classifications and solver behavior on large datasets.
 
-`m = inputs `
+---
 
-`s = outputs `
+## Features
 
-#### The dataset is export in csv format and is used by the solvers
+- Automatic synthetic dataset generation
+- Support for massive DEA datasets
+- CCR and BCC DEA models
+- Input-oriented and output-oriented formulations
+- Implementations using both PuLP and SciPy
+- Automatic efficiency classification
+- Comparison between optimization libraries
 
-#### The number of efficients and inefficients DMUs are printed to check if the number of the efficients are too high or not
+---
+
+## Project Structure
+
+```text
+.
+├── main.py
+│
+├── dea_ccr_input_oriented_pulp.py
+├── dea_ccr_output_oriented_pulp.py
+│
+├── dea_ccr_input_oriented_scipy.py
+├── dea_ccr_output_oriented_scipy.py
+│
+├── dea_bcc_input_oriented_pulp.py
+├── dea_bcc_output_oriented_pulp.py
+│
+├── dea_bcc_input_oriented_scipy.py
+├── dea_bcc_output_oriented_scipy.py
+│
+└── dataset_dea.csv
+```
+
+---
+
+## Dataset Generation
+
+The dataset generator creates synthetic DEA datasets with realistic variability among DMUs.
+
+### Dataset Characteristics
+
+- User inserts the number of inputs, outputs and DMUs
+- Random input values
+- Controlled proportion of efficient DMUs
+- Output values generated from production capacity estimates
+- Random noise to increase variability
+
+Generated dataset format:
+
+```text
+DMU | Input_1 | Input_2 | ... | Output_1 | Output_2 | ...
+```
+
+---
+## Optimization Libraries
+
+### PuLP Implementation
+
+Library:
+
+```python
+from pulp import *
+```
+
+Solver:
+
+```text
+CBC (Coin-or Branch and Cut)
+```
+
+Characteristics:
+
+- Algebraic modeling approach
+- Easy-to-read mathematical formulation
+- Suitable for educational and research purposes
+
+---
+
+### SciPy Implementation
+
+Library:
+
+```python
+from scipy.optimize import linprog
+```
+
+Solver:
+
+```text
+HiGHS
+```
+
+Characteristics:
+
+- Matrix-based formulation
+- Efficient for large-scale linear programming problems
+- Lower-level implementation with reduced modeling overhead
+
+---
+
+## Output
+
+Each DEA model returns a dataset containing:
+
+| Column | Description |
+|----------|------------|
+| DMU | Decision Making Unit |
+| Efficiency | Efficiency score |
+| Status | Efficient or Inefficient |
+
+Example:
+
+```text
+DMU      Efficiency   Status
+DMU_1    1.0000       Efficient
+DMU_2    0.8734       Inefficient
+DMU_3    1.0000       Efficient
+```
+
+Summary statistics are also reported:
+
+```text
+Total Efficient DMUs
+Total Inefficient DMUs
+```
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Sara-MF/DEA-Massive-Datasets-Generator.git
+```
+
+Install dependencies:
+
+```bash
+pip install pandas scipy pulp
+```
+
+---
+
+## Usage
+
+Run:
+
+```bash
+python main.py
+```
+
+The script will:
+
+1. Wait user inserts the number of inputs, outputs and DMUs
+2. Generate a synthetic DEA dataset
+3. Save the dataset as `dataset_dea.csv`
+4. Execute all CCR and BCC DEA models
+5. Display efficiency statistics for each implementation
+
+---
+
+## Technologies
+
+- Python 3.11.9
+- Pandas
+- PuLP
+- SciPy
+- CBC Solver
+- HiGHS Solver
