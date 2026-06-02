@@ -3,24 +3,19 @@ import random
 
 from dea_ccr_output_oriented_pulp import dea_ccr_output_pulp
 from dea_ccr_input_oriented_pulp import dea_ccr_input_pulp
+from dea_bcc_output_oriented_pulp import dea_bcc_output_pulp
+from dea_bcc_input_oriented_pulp import dea_bcc_input_pulp
+
 from dea_ccr_output_oriented_scipy import dea_ccr_output_scipy
+from dea_ccr_input_oriented_scipy import dea_ccr_input_scipy
+from dea_bcc_output_oriented_scipy import dea_bcc_output_scipy
+from dea_bcc_input_oriented_scipy import dea_bcc_input_scipy
 
 csv_name = "dataset_dea.csv"
 
-# Generating random quantity of inputs and outputs
-num_inputs = random.randint(2, 5)
-num_outputs = random.randint(1, 3)
-
-# DEA rule:
-# n >= max{m*s, 3(m+s)}
-#
-# n = DMUs
-# m = inputs
-# s = outputs
-min_dmus = max(num_inputs * num_outputs, 3 * (num_inputs + num_outputs))
-
-# Generating random quantity of DMUs respecting the rule
-num_dmus = max(min_dmus, min_dmus + 400)
+num_inputs = int(input("Insert the number of inputs: "))
+num_outputs = int(input("Insert the number of outputs: "))
+num_dmus = int(input("Insert the number of DMUs: "))
 
 print("\nDEA CONFIGURATION\n")
 print(f"DMUs: {num_dmus}")
@@ -40,7 +35,7 @@ for i in range(num_dmus):
 
     # Input values
     for j in range(num_inputs):
-        input_value = random.randint(1, 100)
+        input_value = random.randint(50, 1000)
 
         inputs.append(input_value)
         row.append(input_value)
@@ -113,22 +108,57 @@ print(dataset.head())
 print("\n----------------------\n")
 
 result_pulp, efficients_ccr_output_pulp, inefficients_ccr_output_pulp = dea_ccr_output_pulp(csv_name)
-print("RESULT DEA - OUTPUT ORIENTED PULP\n")
+print("RESULT DEA - CCR OUTPUT ORIENTED PULP\n")
 # print(result_pulp.to_string(index=False))
 print("Efficients: ", efficients_ccr_output_pulp)
 print("Inefficients: ", inefficients_ccr_output_pulp)
 print("\n----------------------\n")
 
 result_pulp, efficients_ccr_input_pulp, inefficients_ccr_input_pulp = dea_ccr_input_pulp(csv_name)
-print("RESULT DEA - INPUT ORIENTED PULP\n")
+print("RESULT DEA - CCR INPUT ORIENTED PULP\n")
 # print(result_pulp.to_string(index=False))
 print("Efficients: ", efficients_ccr_input_pulp)
 print("Inefficients: ", inefficients_ccr_input_pulp)
 print("\n----------------------\n")
 
-result_scipy, efficients_scipy, inefficients_scipy = dea_ccr_output_scipy(csv_name)
-print("RESULT DEA - SCIPY\n")
+result_pulp, efficients_bcc_output_pulp, inefficients_bcc_output_pulp = dea_bcc_output_pulp(csv_name)
+print("RESULT DEA - BCC OUTPUT ORIENTED PULP\n")
+# print(result_pulp.to_string(index=False))
+print("Efficients: ", efficients_bcc_output_pulp)
+print("Inefficients: ", inefficients_bcc_output_pulp)
+print("\n----------------------\n")
+
+result_pulp, efficients_bcc_input_pulp, inefficients_bcc_input_pulp = dea_bcc_input_pulp(csv_name)
+print("RESULT DEA - BCC INPUT ORIENTED PULP\n")
+# print(result_pulp.to_string(index=False))
+print("Efficients: ", efficients_bcc_input_pulp)
+print("Inefficients: ", inefficients_bcc_input_pulp)
+print("\n----------------------\n")
+
+result_scipy, efficients_ccr_output_scipy, inefficients_ccr_output_scipy = dea_ccr_output_scipy(csv_name)
+print("RESULT DEA - CCR OUTPUT ORIENTED SCIPY\n")
 # print(result_scipy.to_string(index=False))
-print("Efficients: ", efficients_scipy)
-print("Inefficients: ", inefficients_scipy)
+print("Efficients: ", efficients_ccr_output_scipy)
+print("Inefficients: ", inefficients_ccr_output_scipy)
+print("\n----------------------\n")
+
+result_scipy, efficients_ccr_input_scipy, inefficients_ccr_input_scipy = dea_ccr_input_scipy(csv_name)
+print("RESULT DEA - CCR INPUT ORIENTED SCIPY\n")
+# print(result_scipy.to_string(index=False))
+print("Efficients: ", efficients_ccr_input_scipy)
+print("Inefficients: ", inefficients_ccr_input_scipy)
+print("\n----------------------\n")
+
+result_scipy, efficients_bcc_output_scipy, inefficients_bcc_output_scipy = dea_bcc_output_scipy(csv_name)
+print("RESULT DEA - BCC OUTPUT ORIENTED SCIPY\n")
+# print(result_scipy.to_string(index=False))
+print("Efficients: ", efficients_bcc_output_scipy)
+print("Inefficients: ", inefficients_bcc_output_scipy)
+print("\n----------------------\n")
+
+result_scipy, efficients_bcc_input_scipy, inefficients_bcc_input_scipy = dea_bcc_input_scipy(csv_name)
+print("RESULT DEA - BCC INPUT ORIENTED SCIPY\n")
+# print(result_scipy.to_string(index=False))
+print("Efficients: ", efficients_bcc_input_scipy)
+print("Inefficients: ", inefficients_bcc_input_scipy)
 print("\n")
