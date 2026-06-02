@@ -8,7 +8,7 @@ The project focuses on implementing and testing DEA models under different orien
 
 ## Objectives
 
-- Generate a synthetic DEA datasets based on input values insert by user
+- Generate synthetic DEA datasets
 
 - Implement classical DEA models:
   - CCR Input-Oriented
@@ -70,6 +70,12 @@ The dataset generator creates synthetic DEA datasets with realistic variability 
 - Controlled proportion of efficient DMUs
 - Output values generated from production capacity estimates
 - Random noise to increase variability
+
+Rule for the number of inputs, outputs and DMUs:
+
+```python
+num_dmus >= 3 * (num_inputs + num_outputs)
+```
 
 Generated dataset format:
 
