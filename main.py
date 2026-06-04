@@ -17,15 +17,15 @@ num_inputs = int(input("Insert the number of inputs: "))
 num_outputs = int(input("Insert the number of outputs: "))
 num_dmus = int(input("Insert the number of DMUs: "))
 
-while(num_dmus < 3 * (num_inputs + num_outputs)):
-    print("\nThe inputs does not follow the rule: ")
+while num_dmus < 3 * (num_inputs + num_outputs):
+
+    print("\nThe inputs does not follow the rule:")
     print("num_dmus >= 3 * (num_inputs + num_outputs)\n")
     print("Insert the values again, respecting the rule\n")
 
     num_inputs = int(input("Insert the number of inputs: "))
     num_outputs = int(input("Insert the number of outputs: "))
     num_dmus = int(input("Insert the number of DMUs: "))
-
 
 print("\nDEA CONFIGURATION\n")
 print(f"DMUs: {num_dmus}")
@@ -34,6 +34,11 @@ print(f"Outputs: {num_outputs}")
 
 data = []
 
+global_weights = [
+    random.uniform(0.8, 1.2)
+    for _ in range(num_inputs)
+]
+
 for i in range(num_dmus):
 
     row = []
@@ -41,52 +46,46 @@ for i in range(num_dmus):
     # DMU name
     row.append(f"DMU_{i + 1}")
 
+    # Creates correlation among all variables
+    size_factor = random.uniform(100, 1000)
+
     inputs = []
 
-    # Input values
+    # Generate correlated inputs
     for j in range(num_inputs):
-        input_value = random.randint(50, 1000)
+        input_value = (size_factor * random.uniform(0.90, 1.10))
+
+        input_value = round(input_value)
 
         inputs.append(input_value)
         row.append(input_value)
 
-   # Controls the proportion of efficient DMUs
-    if random.random() < 0.08:
+    if random.random() < 0.03:
         true_efficiency = 1.0
     else:
-        true_efficiency = random.uniform(
-            0.50,
-            0.95
+        true_efficiency = random.triangular(
+            0.40,
+            0.95,
+            0.65
         )
 
-    # Assigns a relative importance to each input
-    weights = [
-        random.uniform(0.5, 1.5)
-        for _ in range(num_inputs)
-    ]
-
-    # Estimates the DMU's production capacity
     productive_capacity = sum(
         w * x
-        for w, x in zip(weights, inputs)
+        for w, x in zip(global_weights, inputs)
     )
 
-    # Output values
+    # Generate correlated outputs
     for j in range(num_outputs):
-
-        # Introduces variation among outputs
         output_factor = random.uniform(
-            0.6,
-            1.3
+            0.98,
+            1.02
         )
 
-        # Introduces random variation
         noise = random.uniform(
-            0.90,
-            1.10
+            0.995,
+            1.005
         )
 
-        # Generates the final output value
         output_value = (
             productive_capacity
             * true_efficiency
@@ -104,71 +103,69 @@ columns = ["DMU"]
 
 # Input columns
 for i in range(num_inputs):
-    columns.append(f"Input_{i + 1}")
+    columns.append(
+        f"Input_{i + 1}"
+    )
 
 # Output columns
 for i in range(num_outputs):
-    columns.append(f"Output_{i + 1}")
+    columns.append(
+        f"Output_{i + 1}"
+    )
 
 dataset = pd.DataFrame(data, columns=columns)
 
 dataset.to_csv(csv_name, index=False)
-print("\n----------------------\n\nGENERATED DATASET\n")
-print(dataset.head())
+
+print("\n----------------------")
+print("\nGENERATED DATASET\n")
+print(dataset.head(10))
 print("\n----------------------\n")
 
 result_pulp, efficients_ccr_output_pulp, inefficients_ccr_output_pulp = dea_ccr_output_pulp(csv_name)
 print("RESULT DEA - CCR OUTPUT ORIENTED PULP\n")
-# print(result_pulp.to_string(index=False))
-print("Efficients: ", efficients_ccr_output_pulp)
-print("Inefficients: ", inefficients_ccr_output_pulp)
+print("Efficients:", efficients_ccr_output_pulp)
+print("Inefficients:", inefficients_ccr_output_pulp)
 print("\n----------------------\n")
 
 result_pulp, efficients_ccr_input_pulp, inefficients_ccr_input_pulp = dea_ccr_input_pulp(csv_name)
 print("RESULT DEA - CCR INPUT ORIENTED PULP\n")
-# print(result_pulp.to_string(index=False))
-print("Efficients: ", efficients_ccr_input_pulp)
-print("Inefficients: ", inefficients_ccr_input_pulp)
+print("Efficients:", efficients_ccr_input_pulp)
+print("Inefficients:", inefficients_ccr_input_pulp)
 print("\n----------------------\n")
 
 result_pulp, efficients_bcc_output_pulp, inefficients_bcc_output_pulp = dea_bcc_output_pulp(csv_name)
 print("RESULT DEA - BCC OUTPUT ORIENTED PULP\n")
-# print(result_pulp.to_string(index=False))
-print("Efficients: ", efficients_bcc_output_pulp)
-print("Inefficients: ", inefficients_bcc_output_pulp)
+print("Efficients:", efficients_bcc_output_pulp)
+print("Inefficients:", inefficients_bcc_output_pulp)
 print("\n----------------------\n")
 
 result_pulp, efficients_bcc_input_pulp, inefficients_bcc_input_pulp = dea_bcc_input_pulp(csv_name)
 print("RESULT DEA - BCC INPUT ORIENTED PULP\n")
-# print(result_pulp.to_string(index=False))
-print("Efficients: ", efficients_bcc_input_pulp)
-print("Inefficients: ", inefficients_bcc_input_pulp)
+print("Efficients:", efficients_bcc_input_pulp)
+print("Inefficients:", inefficients_bcc_input_pulp)
 print("\n----------------------\n")
 
 result_scipy, efficients_ccr_output_scipy, inefficients_ccr_output_scipy = dea_ccr_output_scipy(csv_name)
 print("RESULT DEA - CCR OUTPUT ORIENTED SCIPY\n")
-# print(result_scipy.to_string(index=False))
-print("Efficients: ", efficients_ccr_output_scipy)
-print("Inefficients: ", inefficients_ccr_output_scipy)
+print("Efficients:", efficients_ccr_output_scipy)
+print("Inefficients:", inefficients_ccr_output_scipy)
 print("\n----------------------\n")
 
 result_scipy, efficients_ccr_input_scipy, inefficients_ccr_input_scipy = dea_ccr_input_scipy(csv_name)
 print("RESULT DEA - CCR INPUT ORIENTED SCIPY\n")
-# print(result_scipy.to_string(index=False))
-print("Efficients: ", efficients_ccr_input_scipy)
-print("Inefficients: ", inefficients_ccr_input_scipy)
+print("Efficients:", efficients_ccr_input_scipy)
+print("Inefficients:", inefficients_ccr_input_scipy)
 print("\n----------------------\n")
 
 result_scipy, efficients_bcc_output_scipy, inefficients_bcc_output_scipy = dea_bcc_output_scipy(csv_name)
 print("RESULT DEA - BCC OUTPUT ORIENTED SCIPY\n")
-# print(result_scipy.to_string(index=False))
-print("Efficients: ", efficients_bcc_output_scipy)
-print("Inefficients: ", inefficients_bcc_output_scipy)
+print("Efficients:", efficients_bcc_output_scipy)
+print("Inefficients:", inefficients_bcc_output_scipy)
 print("\n----------------------\n")
 
 result_scipy, efficients_bcc_input_scipy, inefficients_bcc_input_scipy = dea_bcc_input_scipy(csv_name)
 print("RESULT DEA - BCC INPUT ORIENTED SCIPY\n")
-# print(result_scipy.to_string(index=False))
-print("Efficients: ", efficients_bcc_input_scipy)
-print("Inefficients: ", inefficients_bcc_input_scipy)
+print("Efficients:", efficients_bcc_input_scipy)
+print("Inefficients:", inefficients_bcc_input_scipy)
 print("\n")
