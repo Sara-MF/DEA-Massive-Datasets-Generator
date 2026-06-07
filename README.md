@@ -188,7 +188,8 @@ The script will:
 2. Generate a synthetic DEA dataset
 3. Save the dataset as `dataset_dea.csv`
 4. Execute all CCR and BCC DEA models
-5. Display efficiency statistics for each implementation
+5. Create a csv file for each model to store results
+6. Display efficiency statistics for each implementation
 
 ---
 
