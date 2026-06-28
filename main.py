@@ -13,19 +13,26 @@ from dea_bcc_input_oriented_scipy import dea_bcc_input_scipy
 
 csv_name = "dataset_dea.csv"
 
-num_inputs = int(input("Insert the number of inputs: "))
-num_outputs = int(input("Insert the number of outputs: "))
-num_dmus = int(input("Insert the number of DMUs: "))
+def read_number(message):
+    while True:
+        try:
+            return int(input(message))
+        except ValueError:
+            print("The entered value does not correspond to a number. Please try again.\n")
+
+num_inputs = read_number("Insert the number of inputs: ")
+num_outputs = read_number("Insert the number of outputs: ")
+num_dmus = read_number("Insert the number of DMUs: ")
 
 while num_dmus < 3 * (num_inputs + num_outputs):
 
-    print("\nThe inputs does not follow the rule:")
+    print("\nThe inputs do not follow the rule:")
     print("num_dmus >= 3 * (num_inputs + num_outputs)\n")
     print("Insert the values again, respecting the rule\n")
 
-    num_inputs = int(input("Insert the number of inputs: "))
-    num_outputs = int(input("Insert the number of outputs: "))
-    num_dmus = int(input("Insert the number of DMUs: "))
+    num_inputs = read_number("Insert the number of inputs: ")
+    num_outputs = read_number("Insert the number of outputs: ")
+    num_dmus = read_number("Insert the number of DMUs: ")
 
 print("\nDEA CONFIGURATION\n")
 print(f"DMUs: {num_dmus}")
