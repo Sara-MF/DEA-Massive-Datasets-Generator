@@ -34,10 +34,16 @@ print(f"Outputs: {num_outputs}")
 
 data = []
 
-global_weights = [
-    random.uniform(0.8, 1.2)
-    for _ in range(num_inputs)
-]
+weights_matrix = []
+
+for _ in range(num_outputs):
+    input_weights = []
+    
+    for _ in range(num_inputs):
+        random_weight = random.uniform(0.5, 1.5)
+        input_weights.append(random_weight)
+    
+    weights_matrix.append(input_weights)
 
 for i in range(num_dmus):
 
@@ -46,56 +52,56 @@ for i in range(num_dmus):
     # DMU name
     row.append(f"DMU_{i + 1}")
 
-    # Creates correlation among all variables
     size_factor = random.uniform(100, 1000)
 
     inputs = []
 
-    # Generate correlated inputs
+    # Inputs generation
     for j in range(num_inputs):
-        input_value = (size_factor * random.uniform(0.90, 1.10))
+        input_variance = random.uniform(0.40, 1.60)
+        input_value = size_factor * input_variance
 
         input_value = round(input_value)
 
         inputs.append(input_value)
         row.append(input_value)
 
-    if random.random() < 0.03:
+    # Calculates true efficiency
+    if random.random() < 0.08:  
         true_efficiency = 1.0
     else:
-        true_efficiency = random.triangular(
-            0.40,
-            0.95,
-            0.65
-        )
+        true_efficiency = random.uniform(0.02, 0.18)
 
-    productive_capacity = sum(
-        w * x
-        for w, x in zip(global_weights, inputs)
-    )
-
-    # Generate correlated outputs
+    # Outputs generation
     for j in range(num_outputs):
-        output_factor = random.uniform(
-            0.98,
-            1.02
+    
+        dmu_weight_noise = random.uniform(0.85, 1.15)
+
+        specific_weights = []
+
+        current_output_weights = weights_matrix[j]
+
+        for w in current_output_weights:
+            weight_with_noise = w * dmu_weight_noise
+            specific_weights.append(weight_with_noise)
+        
+        productive_capacity = sum(
+            w * x 
+            for w, x in zip(specific_weights, inputs)
         )
 
-        noise = random.uniform(
-            0.995,
-            1.005
-        )
+        output_importance = random.uniform(0.25, 1.75)
+
+        noise = random.uniform(0.99, 1.01)
 
         output_value = (
             productive_capacity
             * true_efficiency
-            * output_factor
+            * output_importance
             * noise
         )
 
-        row.append(
-            round(output_value)
-        )
+        row.append(max(100, round(output_value)))
 
     data.append(row)
 
